@@ -26,6 +26,7 @@ Route::prefix('admin')
     ->namespace('Admin')
     ->middleware('auth')
     ->group(function(){
+        Route::resource('users', 'UserController');
         Route::resource('info_users', 'InfoUserController');
         Route::resource('categories', 'CategoryController');
         Route::resource('photos', 'PhotoController');
