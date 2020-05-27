@@ -4,6 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+
+use App\User;
+use App\InfoUser;
+use App\Page;
+use App\Category;
+use App\Tag;
+use App\Photo;
 
 class PageController extends Controller
 {
@@ -14,7 +23,9 @@ class PageController extends Controller
      */
     public function index()
     {
-        //
+        $pages = Page::all();
+
+        return view('admin.pages.index', compact('pages'));
     }
 
     /**
@@ -24,7 +35,11 @@ class PageController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+        $tags = Tag::all();
+        $photos = Photo::all();
+
+        return view('admin.pages.create', compact('categories', 'tags', 'photos'));
     }
 
     /**
@@ -35,7 +50,25 @@ class PageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+
+        $validator = Validator::make($data, [
+            'title' => 'required|max:200',
+            'body' => 'required',
+            'category_id' => 'required|exists:categories,id',
+            'tags' => 'required|array',
+            'photos' => 'required|array',
+            'tags.*' => 'exists:tags,id',
+            'photos.*' => 'exists:photos,id'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('admin.pages.create')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        dd('fiuu');
     }
 
     /**
