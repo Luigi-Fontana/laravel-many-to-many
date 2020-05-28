@@ -19,7 +19,7 @@ class PhotosTableSeeder extends Seeder
             $photo = new Photo;
             $photo->user_id = $user->id;
             $photo->name = $faker->sentence(3, true);
-            $photo->path = $faker->sentence(6, true);
+            $photo->path = 'https://picsum.photos/200/300';
             $photo->description = $faker->sentence(6, true);
             $photo->save();
         }

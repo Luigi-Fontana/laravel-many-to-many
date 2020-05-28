@@ -1,11 +1,15 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+use Faker\Generator as Faker;
+use Carbon\Carbon;
 use App\Page;
 use App\Category;
 use App\User;
-use Faker\Generator as Faker;
-use Carbon\Carbon;
+use App\Photo;
+use App\Tag;
+
 
 class PagesTableSeeder extends Seeder
 {
@@ -28,6 +32,12 @@ class PagesTableSeeder extends Seeder
             $now = Carbon::now()->format('Y-m-d-H-i-s');
             $page->slug = Str::slug($page->title, '-') . $now;
             $page->save();
+
+            $photos = Photo::inRandomOrder()->limit(rand(1,5))->get();
+            $page->photos()->attach($photos);
+
+            $tags = Tag::inRandomOrder()->limit(rand(1,10))->get();
+            $page->tags()->attach($tags);
         }
     }
 }

@@ -18,7 +18,7 @@ class CategoriesTableSeeder extends Seeder
             $user = User::inRandomOrder()->first();
             $category = new Category;
             $category->user_id = $user->id;
-            $category->name = $faker->sentence(3, true);
+            $category->name = $faker->word;
             $category->description = $faker->sentence(6, true);
             $category->save();
         }
