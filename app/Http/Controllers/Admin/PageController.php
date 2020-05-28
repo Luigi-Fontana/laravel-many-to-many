@@ -99,9 +99,9 @@ class PageController extends Controller
      */
     public function show($id)
     {
-        // $page = Page::findOrFail($id);
-        //
-        // return view('admin.pages.show', compact('page'));
+        $page = Page::findOrFail($id);
+        
+        return view('admin.pages.show', compact('page'));
     }
 
     /**
