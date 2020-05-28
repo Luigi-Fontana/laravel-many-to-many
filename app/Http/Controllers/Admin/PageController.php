@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 use App\User;
 use App\InfoUser;
@@ -23,7 +25,7 @@ class PageController extends Controller
      */
     public function index()
     {
-        $pages = Page::all();
+        $pages = Page::paginate(25);
 
         return view('admin.pages.index', compact('pages'));
     }
@@ -52,6 +54,10 @@ class PageController extends Controller
     {
         $data = $request->all();
 
+        $data['user_id'] = Auth::id();
+        $now = Carbon::now()->format('Y-m-d-H-i-s');
+        $data['slug'] = Str::slug($data['title'] , '-') . $now;
+
         $validator = Validator::make($data, [
             'title' => 'required|max:200',
             'body' => 'required',
@@ -68,7 +74,21 @@ class PageController extends Controller
                 ->withInput();
         }
 
-        dd('fiuu');
+        $page = new Page;
+
+        $page->fill($data);
+        $saved = $page->save();
+
+        $page->tags()->attach($data['tags']);
+        $page->photos()->attach($data['photos']);
+
+        if (!$saved) {
+            return redirect()->route('admin.pages.create')
+                ->with('failure', 'Pagina non inserita.');
+        }
+
+        return redirect()->route('admin.pages.show', $page->id)
+            ->with('success', 'Pagina ' . $page->id . ' inserita correttamente.');
     }
 
     /**
@@ -79,7 +99,9 @@ class PageController extends Controller
      */
     public function show($id)
     {
+        // $page = Page::findOrFail($id);
         //
+        // return view('admin.pages.show', compact('page'));
     }
 
     /**
