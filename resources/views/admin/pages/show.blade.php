@@ -8,7 +8,7 @@
                         <a class="nav-link active btn btn-primary m-3" href="{{route('admin.pages.index')}}">Torna all'indice</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active btn btn-primary m-3" href="{{route('admin.pages.index')}}">Modifica</a>
+                        <a class="nav-link active btn btn-primary m-3" href="{{route('admin.pages.edit', $page->id)}}">Modifica</a>
                     </li>
                 </ul>
                 <h1>{{$page->title}}</h1>

@@ -100,7 +100,7 @@ class PageController extends Controller
     public function show($id)
     {
         $page = Page::findOrFail($id);
-        
+
         return view('admin.pages.show', compact('page'));
     }
 
@@ -112,7 +112,12 @@ class PageController extends Controller
      */
     public function edit($id)
     {
-        //
+        $page = Page::findOrFail($id);
+        $categories = Category::all();
+        $tags = Tag::all();
+        $photos = Photo::all();
+
+        return view('admin.pages.edit', compact('page','categories', 'tags', 'photos'));
     }
 
     /**
@@ -124,7 +129,45 @@ class PageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $page = Page::findOrFail($id);
+        $data = $request->all();
+
+        $userId = Auth::id();
+        $author = $page->user_id;
+
+        if($userId != $author) {
+            return redirect()->route('admin.pages.index')
+                ->with('failure', 'Non puoi modificare una pagina che non hai creato tu');
+        }
+
+        $validator = Validator::make($data, [
+            'title' => 'max:200',
+            'category_id' => 'exists:categories,id',
+            'tags' => 'array',
+            'photos' => 'array',
+            'tags.*' => 'exists:tags,id',
+            'photos.*' => 'exists:photos,id'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $page->fill($data);
+        $updated = $page->update();
+
+        $page->tags()->sync($data['tags']);
+        $page->photos()->sync($data['photos']);
+
+        if (!$updated) {
+            return redirect()->back()
+                ->with('failure', 'Pagina non modificata.');
+        }
+
+        return redirect()->route('admin.pages.show', $page->id)
+            ->with('success', 'Pagina ' . $page->id . ' modificata correttamente.');
     }
 
     /**
