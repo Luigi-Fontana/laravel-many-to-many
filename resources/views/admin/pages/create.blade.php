@@ -5,7 +5,7 @@
             <div class="col-12">
                 <ul class="nav justify-content-center">
                     <li class="nav-item">
-                        <a class="nav-link active btn btn-primary m-3" href="{{route('admin.pages.index')}}">Annulla inserimento</a>
+                        <a class="nav-link btn btn-primary m-3" href="{{route('admin.pages.index')}}">&#8592; Annulla inserimento</a>
                     </li>
                 </ul>
                 <form action="{{route('admin.pages.store')}}" method="POST">
@@ -59,7 +59,7 @@
                             <input type="checkbox" name="photos[]" id="photos-{{$photo->id}}" value="{{$photo->id}}">
                         @endforeach
                     </div>
-                    <input type="submit" value="Invia" class="btn btn-primary">
+                    <input type="submit" value="Invia" class="btn btn-success">
                 </form>
             </div>
         </div>

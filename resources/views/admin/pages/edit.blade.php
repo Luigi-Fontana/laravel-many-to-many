@@ -5,7 +5,7 @@
             <div class="col-12">
                 <ul class="nav justify-content-center">
                     <li class="nav-item">
-                        <a class="nav-link active btn btn-primary m-3" href="{{route('admin.pages.index')}}">Annulla Modifiche</a>
+                        <a class="nav-link btn btn-primary m-3" href="{{route('admin.pages.index')}}">&#8592; Annulla Modifiche</a>
                     </li>
                 </ul>
                 <form action="{{route('admin.pages.update', $page->id)}}" method="POST">

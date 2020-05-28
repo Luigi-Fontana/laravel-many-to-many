@@ -5,10 +5,10 @@
             <div class="col-12">
                 <ul class="nav justify-content-center">
                     <li class="nav-item">
-                        <a class="nav-link active btn btn-primary m-3" href="{{route('home')}}">Torna alla Dashboard</a>
+                        <a class="nav-link btn btn-primary m-3" href="{{route('home')}}">&#8592; Torna alla Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active btn btn-primary m-3" href="{{route('admin.pages.create')}}">Nuova Pagina</a>
+                        <a class="nav-link btn btn-success m-3" href="{{route('admin.pages.create')}}">Nuova Pagina</a>
                     </li>
                 </ul>
                 <table class="table">
