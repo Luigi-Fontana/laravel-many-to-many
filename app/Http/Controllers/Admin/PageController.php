@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-// use App\Mail\SendNewMail;
-// use Illuminate\Support\Facades\Mail;
+use App\Mail\SendNewMail;
+use Illuminate\Support\Facades\Mail;
 
 
 use App\User;
@@ -57,17 +57,25 @@ class PageController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-
         $data['user_id'] = Auth::id();
         $now = Carbon::now()->format('Y-m-d-H-i-s');
         $data['slug'] = Str::slug($data['title'] , '-') . $now;
+
+        if (isset($data['photo'])) {
+            $path = Storage::disk('public')->put('images', $data['photo']);
+            $photo = new Photo;
+            $photo->user_id = Auth::id();
+            $photo->name = $data['title'];
+            $photo->path = $path;
+            $photo->description = 'Descrizione Foto';
+            $photo->save();
+        }
 
         $validator = Validator::make($data, [
             'title' => 'required|max:200',
             'body' => 'required',
             'category_id' => 'required|exists:categories,id',
             'tags' => 'required|array',
-            'photos' => 'required|array',
             'tags.*' => 'exists:tags,id',
             'photos.*' => 'exists:photos,id'
         ]);
@@ -76,16 +84,6 @@ class PageController extends Controller
             return redirect()->route('admin.pages.create')
                 ->withErrors($validator)
                 ->withInput();
-        }
-
-        if (isset($data['photo'])) {
-            $path = Storage::disk('public')->put('images', $data['photo']);
-            $photo = new Photo;
-            $photo->user_id = Auth::id();
-            $photo->name = $data['title'];
-            $photo->path = $path;
-            $photo->description = 'Lorem ipsum';
-            $photo->save();
         }
 
         $page = new Page;
@@ -104,6 +102,7 @@ class PageController extends Controller
                 ->with('failure', 'Pagina non inserita.');
         }
 
+        // Mail::to('mail@mail.it')->send(new SendNewMail($page));
         return redirect()->route('admin.pages.show', $page->id)
             ->with('success', 'Pagina ' . $page->id . ' inserita correttamente.');
     }
