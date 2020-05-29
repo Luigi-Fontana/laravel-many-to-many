@@ -8,7 +8,7 @@
                         <a class="nav-link btn btn-primary m-3" href="{{route('admin.pages.index')}}">&#8592; Annulla inserimento</a>
                     </li>
                 </ul>
-                <form action="{{route('admin.pages.store')}}" method="POST">
+                <form action="{{route('admin.pages.store')}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('POST')
                     <div class="form-group">
@@ -47,17 +47,14 @@
                     @enderror
                     <div class="form-group">
                         <h3>Tags</h3>
-                        @foreach ($tags as $key => $tag)
+                        @foreach ($tags as $tag)
                             <label for="tags-{{$tag->id}}">{{$tag->name}}</label>
-                            <input type="checkbox" name="tags[]" id="tags-{{$tag->id}}" value="{{$tag->id}}" {{(!empty(old('tags.'. $key))) ? 'checked' : ''}}>
+                            <input type="checkbox" name="tags[]" id="tags-{{$tag->id}}" value="{{$tag->id}}" {{(is_array(old('tags')) && in_array($tag->id, old('tags'))) ? 'checked' : ''}}>
                         @endforeach
                     </div>
                     <div class="form-group">
-                        <h3>Photos</h3>
-                        @foreach ($photos as $photo)
-                            <label for="photos-{{$photo->id}}">{{$photo->name}}</label>
-                            <input type="checkbox" name="photos[]" id="photos-{{$photo->id}}" value="{{$photo->id}}">
-                        @endforeach
+                        <label for="photo">Photo</label>
+                        <input type="file" name="photo" id="photo">
                     </div>
                     <input type="submit" value="Invia" class="btn btn-success">
                 </form>

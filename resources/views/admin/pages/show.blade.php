@@ -40,8 +40,7 @@
                         <h4>Foto</h4>
                         @foreach ($page->photos as $photo)
                             <div>
-                                <p>{{$photo->name}}</p>
-                                <img src="{{$photo->path}}">
+                                <img class="img-fluid" src="{{asset('storage/'. $photo->path)}}" alt="{{$photo->name}}">
                             </div>
                         @endforeach
                     </div>

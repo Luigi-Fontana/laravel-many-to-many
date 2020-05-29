@@ -8,7 +8,7 @@
                         <a class="nav-link btn btn-primary m-3" href="{{route('admin.pages.index')}}">&#8592; Annulla Modifiche</a>
                     </li>
                 </ul>
-                <form action="{{route('admin.pages.update', $page->id)}}" method="POST">
+                <form action="{{route('admin.pages.update', $page->id)}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
                     <div class="form-group">
@@ -49,15 +49,15 @@
                         <h3>Tags</h3>
                         @foreach ($tags as $key => $tag)
                             <label for="tags-{{$tag->id}}">{{$tag->name}}</label>
-                            <input type="checkbox" name="tags[]" id="tags-{{$tag->id}}" value="{{$tag->id}}" {{(!empty(old('tags.'. $key)) ||  $page->tags->contains($tag->id)) ? 'checked' : ''}}>
+                            <input type="checkbox" name="tags[]" id="tags-{{$tag->id}}" value="{{$tag->id}}" {{((is_array(old('tags')) && in_array($tag->id, old('tags'))) ||  $page->tags->contains($tag->id)) ? 'checked' : ''}}>
                         @endforeach
                     </div>
                     <div class="form-group">
                         <h3>Photos</h3>
-                        @foreach ($photos as $photo)
-                            <label for="photos-{{$photo->id}}">{{$photo->name}}</label>
-                            <input type="checkbox" name="photos[]" id="photos-{{$photo->id}}" value="{{$photo->id}}" {{(!empty(old('photos.'. $key)) ||  $page->photos->contains($photo->id)) ? 'checked' : ''}}>
+                        @foreach ($page->photos as $photo)
+                            <img class="img-fluid"  src="{{asset('storage/'. $photo->path)}}" alt="{{$photo->name}}">
                         @endforeach
+                        <input type="file" name="photo-file" >
                     </div>
                     <input type="submit" value="Salva" class="btn btn-success">
                 </form>

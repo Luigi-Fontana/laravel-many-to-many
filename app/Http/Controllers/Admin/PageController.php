@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+// use App\Mail\SendNewMail;
+// use Illuminate\Support\Facades\Mail;
+
 
 use App\User;
 use App\InfoUser;
@@ -74,13 +78,26 @@ class PageController extends Controller
                 ->withInput();
         }
 
+        if (isset($data['photo'])) {
+            $path = Storage::disk('public')->put('images', $data['photo']);
+            $photo = new Photo;
+            $photo->user_id = Auth::id();
+            $photo->name = $data['title'];
+            $photo->path = $path;
+            $photo->description = 'Lorem ipsum';
+            $photo->save();
+        }
+
         $page = new Page;
 
         $page->fill($data);
         $saved = $page->save();
 
         $page->tags()->attach($data['tags']);
-        $page->photos()->attach($data['photos']);
+
+        if(!empty($photo)) {
+            $page->photos()->attach($photo);
+        }
 
         if (!$saved) {
             return redirect()->route('admin.pages.create')
@@ -138,6 +155,27 @@ class PageController extends Controller
         if($userId != $author) {
             return redirect()->route('admin.pages.index')
                 ->with('failure', 'Non puoi modificare una pagina che non hai creato tu');
+        }
+
+        if (isset($data['photo-file'])) {
+            $photosThisPage = $page->photos;
+            foreach($photosThisPage as $photo) {
+                $deleted = Storage::disk('public')->delete($photo->path);
+                $page->photos()->detach($photo->id);
+                $photoDb = Photo::find($photo->id);
+                $photoDb->delete();
+            }
+
+            $path = Storage::disk('public')->put('images', $data['photo-file']);
+
+            $photo = new Photo;
+            $photo->user_id = Auth::id();
+            $photo->name = $data['title'];
+            $photo->path = $path;
+            $photo->description = 'Lorem ipsum';
+            $saved = $photo->save();
+
+            $page->photos()->attach($photo->id);
         }
 
         $validator = Validator::make($data, [
